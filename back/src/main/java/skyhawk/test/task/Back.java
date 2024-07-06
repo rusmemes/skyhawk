@@ -63,8 +63,23 @@ public class Back {
     }
     System.out.println("DDL applied");
 
-    runHealthEndpoint();
+    final HttpServer server = HttpServer.create(new InetSocketAddress(Env.getPort()), 0);
+    server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+    server.createContext("/health", exchange -> {
+      exchange.sendResponseHeaders(200, -1);
+    });
+    server.start();
+
     System.out.println("Health endpoint started");
+
+    try {
+      workOnKafka();
+    } finally {
+      server.stop(0);
+    }
+  }
+
+  private static void workOnKafka() throws InterruptedException {
 
     boolean firstRead = true;
 
@@ -115,15 +130,6 @@ public class Back {
 
       kafkaReader.commitOffset();
     }
-  }
-
-  private static void runHealthEndpoint() throws IOException {
-    final HttpServer server = HttpServer.create(new InetSocketAddress(Env.getPort()), 0);
-    server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
-    server.createContext("/health", exchange -> {
-      exchange.sendResponseHeaders(200, -1);
-    });
-    server.start();
   }
 
   private static List<CacheRecord> parseRecords(List<byte[]> list) {
