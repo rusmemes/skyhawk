@@ -109,27 +109,6 @@ Consumers json requests fit to schema
       "items": [
         {
           "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
         }
       ]
     }
@@ -204,8 +183,7 @@ per kafka key to another topic, lets call it removal.
 Front container read the removal topic also, each front container does it with its own unique group id to read all
 the records for all keys. When some record is read from the removal topic, front container removes all the records with
 the same combinations of season + team + player from its own memory, but it does it only for record with timestamps
-lower
-of equal to the timestamp of the record read from the removal topic.
+lower of equal to the timestamp of the record read from the removal topic.
 
 When a stat request arrives to /stat endpoint, front container grabs all the available data from the database,
 from its own memory and from the memory of other existing containers, merges the data and calculates statistics
