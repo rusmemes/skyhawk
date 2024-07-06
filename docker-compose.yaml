@@ -1,0 +1,118 @@
+version: "3.7"
+name: skyhawk
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15.3-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test123
+    ports:
+      - "5432:5432"
+    volumes:
+      - "pg-data:/var/lib/postgresql/data"
+    networks:
+      - skyhawk
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - skyhawk
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - skyhawk
+
+  back:
+    ports:
+      - "8080"
+    entrypoint: >
+      java
+      -Dkafka.bootstrap.servers=kafka:9092 
+      -Dkafka.group.id=back
+      -Dkafka.topic.main=main 
+      -Dkafka.topic.removal=removal       
+      -Ddb.url=jdbc:postgresql://postgres:5432/postgres 
+      -Ddb.username=postgres 
+      -Ddb.password=test123
+      -jar app.jar
+    build:
+      context: .
+      dockerfile: back/Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 2
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+    networks:
+      - skyhawk
+
+  lb:
+    container_name: lb
+    build: lb
+    restart: unless-stopped
+    networks:
+      - skyhawk
+    ports:
+      - "8080:8080"
+
+  front:
+    ports:
+      - "8080"
+    entrypoint: >
+      java
+      -Dkafka.topic.main=main 
+      -Dkafka.topic.removal=removal 
+      -Dkafka.group.id=random 
+      -Dkafka.bootstrap.servers=kafka:9092 
+      -Dservice.discovery.self.url=docker.host 
+      -Dservice.discovery.heartbeat.enabled=true 
+      -Ddb.url=jdbc:postgresql://postgres:5432/postgres 
+      -Ddb.username=postgres 
+      -Ddb.password=test123
+      -jar app.jar
+    build:
+      context: .
+      dockerfile: front/Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 3
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+      - back
+      - lb
+    networks:
+      skyhawk:
+        aliases:
+          - front
+
+volumes:
+  pg-data:
+
+networks:
+  skyhawk:
+    driver: bridge
