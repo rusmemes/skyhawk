@@ -1,0 +1,15 @@
+.DS_Store
+.idea
+*.classpath
+*.factorypath
+*.checkstyle
+*.iml
+*.prefs
+*.project
+*.pyc
+bin/
+build/
+logs/
+*/target
+temp/
+ignored
