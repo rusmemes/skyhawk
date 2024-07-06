@@ -1,9 +1,8 @@
 package skyhawk.test.task.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.stat.StatKey;
 import skyhawk.test.task.common.service.discovery.ServiceDiscovery;
 import skyhawk.test.task.runtime.store.RuntimeStore;
 
@@ -13,14 +12,14 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class ServiceCallUtil {
 
   private final ServiceDiscovery serviceDiscovery = ServiceDiscovery.getInstance();
@@ -29,18 +28,10 @@ public class ServiceCallUtil {
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
   private final HttpClient httpClient = HttpClient.newHttpClient();
 
-  public CompletableFuture<List<CacheRecord>> callServices(Map<StatKey, Collection<String>> reqObject) {
+  public CompletableFuture<List<CacheRecord>> callServices(String season) {
 
     final List<URI> serviceList = serviceDiscovery.getServiceList();
     if (serviceList.isEmpty()) {
-      return CompletableFuture.completedFuture(List.of());
-    }
-
-    final byte[] req;
-    try {
-      req = mapper.writeValueAsBytes(reqObject);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
       return CompletableFuture.completedFuture(List.of());
     }
 
@@ -50,13 +41,13 @@ public class ServiceCallUtil {
       try {
         uri = new URI(uri + "/stat-copy");
       } catch (URISyntaxException e) {
-        e.printStackTrace();
+        log.error("URISyntaxException", e);
         continue;
       }
 
       final URI finalUri = uri;
       CompletableFuture<List<CacheRecord>> f = CompletableFuture.supplyAsync(
-          () -> callService(req, finalUri),
+          () -> callService(season.getBytes(StandardCharsets.UTF_8), finalUri),
           executorService
       );
 
@@ -66,7 +57,7 @@ public class ServiceCallUtil {
       });
     }
 
-    return res.thenApply(n -> runtimeStore.copy(reqObject));
+    return res.thenApply(n -> runtimeStore.copy(season));
   }
 
   private List<CacheRecord> callService(byte[] req, URI finalUri) {
@@ -80,7 +71,7 @@ public class ServiceCallUtil {
           HttpResponse.BodyHandlers.ofByteArray()
       );
     } catch (Throwable e) {
-      e.printStackTrace();
+      log.error("Error calling service", e);
       serviceDiscovery.reportBadURI(finalUri);
       return List.of();
     }
@@ -95,7 +86,7 @@ public class ServiceCallUtil {
     try {
       return Arrays.asList(mapper.readValue(body, CacheRecord[].class));
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Error calling service", e);
       return List.of();
     }
   }

@@ -2,6 +2,7 @@ package skyhawk.test.task.common.service.discovery;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.utils.Env;
 
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ServiceDiscovery {
 
@@ -54,7 +56,7 @@ public class ServiceDiscovery {
         try (Connection connection = DataSource.getConnection()) {
           instance.syncState(connection);
         } catch (SQLException | URISyntaxException e) {
-          e.printStackTrace();
+          log.error("an error occurred while syncing service discovery", e);
         }
         try {
           Thread.sleep(interval);

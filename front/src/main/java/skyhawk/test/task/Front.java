@@ -1,6 +1,7 @@
 package skyhawk.test.task;
 
 import com.sun.net.httpserver.HttpServer;
+import lombok.extern.slf4j.Slf4j;
 import skyhawk.test.task.common.utils.Env;
 import skyhawk.test.task.handlers.LogHandler;
 import skyhawk.test.task.handlers.StatCopyHandler;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class Front {
 
   public static void main(String[] args) throws IOException {
@@ -33,6 +35,6 @@ public class Front {
 
     server.start();
 
-    System.out.println("Http server started on port " + port);
+    log.info("Http server started on port {}", port);
   }
 }

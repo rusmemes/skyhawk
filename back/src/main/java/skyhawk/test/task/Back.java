@@ -3,6 +3,7 @@ package skyhawk.test.task;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import skyhawk.test.task.common.db.DataSource;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class Back {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -61,7 +63,7 @@ public class Back {
     try (Connection connection = DataSource.getConnection()) {
       runDDL(connection);
     }
-    System.out.println("DDL applied");
+    log.info("DDL applied");
 
     final HttpServer server = HttpServer.create(new InetSocketAddress(Env.getPort()), 0);
     server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
@@ -70,7 +72,7 @@ public class Back {
     });
     server.start();
 
-    System.out.println("Health endpoint started");
+    log.info("Health endpoint started");
 
     try {
       workOnKafka();
@@ -88,7 +90,7 @@ public class Back {
       final ConsumerRecords<String, byte[]> poll = kafkaReader.read();
       if (firstRead) {
         firstRead = false;
-        System.out.println("First batch read");
+        log.info("First batch read");
       }
 
       if (poll.isEmpty()) {
@@ -139,7 +141,7 @@ public class Back {
       try {
         cacheRecord = MAPPER.readValue(bytes, CacheRecord.class);
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("failed to parse cache record", e);
         continue;
       }
       records.add(cacheRecord);

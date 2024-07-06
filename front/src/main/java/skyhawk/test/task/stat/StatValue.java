@@ -1,4 +1,4 @@
-package skyhawk.test.task.common.protocol.stat;
+package skyhawk.test.task.stat;
 
 import skyhawk.test.task.common.protocol.Log;
 

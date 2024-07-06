@@ -4,16 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.stat.StatKey;
 import skyhawk.test.task.runtime.store.RuntimeStore;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class StatCopyHandler implements HttpHandler {
 
@@ -24,22 +20,9 @@ public class StatCopyHandler implements HttpHandler {
   public void handle(HttpExchange exchange) throws IOException {
 
     final byte[] bytes = exchange.getRequestBody().readAllBytes();
-    final Map<?, ?> statRequest = mapper.readValue(bytes, Map.class);
+    String season = new String(bytes, StandardCharsets.UTF_8);
 
-    final Map<StatKey, Collection<String>> statKeyToFilters = new HashMap<>();
-
-    for (Map.Entry<?, ?> entry : statRequest.entrySet()) {
-      final StatKey statKey = StatKey.valueOf(entry.getKey().toString());
-      final Object value = entry.getValue();
-      statKeyToFilters.put(
-          statKey,
-          value instanceof Collection<?> coll
-              ? coll.stream().map(String.class::cast).collect(Collectors.toSet())
-              : List.of()
-      );
-    }
-
-    final List<CacheRecord> collected = runtimeStore.copy(statKeyToFilters);
+    final List<CacheRecord> collected = runtimeStore.copy(season);
 
     if (collected.isEmpty()) {
       exchange.sendResponseHeaders(204, -1);

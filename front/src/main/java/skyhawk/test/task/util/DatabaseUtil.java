@@ -4,48 +4,32 @@ import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
-import skyhawk.test.task.common.protocol.stat.StatKey;
-import skyhawk.test.task.common.protocol.stat.StatValue;
+import skyhawk.test.task.stat.StatValue;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DatabaseUtil {
 
   public static List<CacheRecord> loadFromDatabase(
-      Map<StatKey, Collection<String>> statKeyToFilters, Set<StatValue> columns
+      String season, Set<StatValue> columns
   ) throws SQLException {
 
     String valueColumns = columns.stream().map(Enum::name).collect(Collectors.joining(","));
-    final String select = "select t1,t2,season,team,player," + valueColumns + " from nba_stats ";
 
-    final String where = " where " + statKeyToFilters.entrySet().stream()
-        .filter(entry -> !entry.getValue().isEmpty())
-        .map(entry -> entry.getKey().name() + " in " + entry.getValue().stream().map(v -> "?").collect(Collectors.joining(",", "(", ")")))
-        .collect(Collectors.joining(" and "));
-
-    final String sql = select + where;
+    final String sql = "select t1,t2,season,team,player," + valueColumns + " from nba_stats where season = ?";
 
     final List<CacheRecord> res = new ArrayList<>();
     try (Connection connection = DataSource.getConnection()) {
       try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
-        int index = 1;
-        for (Collection<String> value : statKeyToFilters.values()) {
-          if (!value.isEmpty()) {
-            for (String v : value) {
-              statement.setString(index++, v.strip().toUpperCase());
-            }
-          }
-        }
+        statement.setString(1, season.strip().toUpperCase());
 
         try (ResultSet resultSet = statement.executeQuery()) {
           while (resultSet.next()) {

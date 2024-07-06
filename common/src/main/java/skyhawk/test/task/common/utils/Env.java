@@ -1,9 +1,12 @@
 package skyhawk.test.task.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetAddress;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 public class Env {
 
   public static final String instanceId = UUID.randomUUID().toString();
@@ -91,7 +94,7 @@ public class Env {
       try {
         return Long.parseLong(property);
       } catch (Throwable e) {
-        e.printStackTrace(System.err);
+        log.error("unable to parse {}", property, e);
       }
     }
     System.err.println(name + " property not set, " + defaultValue + " will be used as default");
@@ -104,7 +107,7 @@ public class Env {
       try {
         return Integer.parseInt(property);
       } catch (Throwable e) {
-        e.printStackTrace(System.err);
+        log.error("unable to parse {}", property, e);
       }
     }
     System.err.println(name + " property not set, " + defaultValue + " will be used as default");
@@ -117,7 +120,7 @@ public class Env {
       try {
         return Boolean.parseBoolean(property);
       } catch (Throwable e) {
-        e.printStackTrace(System.err);
+        log.error("unable to parse {}", property, e);
       }
     }
     System.err.println(name + " property not set, " + defaultValue + " will be used as default");

@@ -1,6 +1,7 @@
 package skyhawk.test.task.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.header.Header;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
+@Slf4j
 public class KafkaWorker {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -29,7 +31,7 @@ public class KafkaWorker {
         try {
           records = kafkaReader.read();
         } catch (Throwable e) {
-          e.printStackTrace();
+          log.error("Failed to read records from kafka", e);
           System.exit(1);
           break;
         }
@@ -69,7 +71,7 @@ public class KafkaWorker {
     try {
       cacheRecord = MAPPER.readValue(bytes, CacheRecord.class);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Failed to parse cacheRecord", e);
       return null;
     }
     return cacheRecord;

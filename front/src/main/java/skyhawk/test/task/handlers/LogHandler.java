@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import lombok.extern.slf4j.Slf4j;
 import skyhawk.test.task.common.kafka.KafkaWriter;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static skyhawk.test.task.common.utils.Http.respond400;
 
+@Slf4j
 public class LogHandler implements HttpHandler {
 
   private final ObjectMapper mapper = new ObjectMapper();
@@ -27,25 +29,25 @@ public class LogHandler implements HttpHandler {
   @Override
   public void handle(HttpExchange httpExchange) throws IOException {
 
-    final Log log;
+    final Log logRecord;
     try {
-      log = mapper.readValue(httpExchange.getRequestBody(), Log.class);
+      logRecord = mapper.readValue(httpExchange.getRequestBody(), Log.class);
     } catch (IOException e) {
       respond400(httpExchange, Map.of("parsingErrors", List.of("request body is incorrect")));
       return;
     }
 
-    final List<String> errors = log.validate();
+    final List<String> errors = logRecord.validate();
     if (!errors.isEmpty()) {
       respond400(httpExchange, Map.of("validationErrors", errors));
       return;
     }
 
-    log.setSeason(log.getSeason().toUpperCase());
-    log.setTeam(log.getTeam().toUpperCase());
-    log.setPlayer(log.getPlayer().toUpperCase());
+    logRecord.setSeason(logRecord.getSeason().toUpperCase());
+    logRecord.setTeam(logRecord.getTeam().toUpperCase());
+    logRecord.setPlayer(logRecord.getPlayer().toUpperCase());
 
-    CacheRecord cacheRecord = new CacheRecord(log, TimeKey.ofCurrentTime());
+    CacheRecord cacheRecord = new CacheRecord(logRecord, TimeKey.ofCurrentTime());
 
     try {
       final String key = cacheRecord.log().getAggregationKey();
@@ -58,7 +60,7 @@ public class LogHandler implements HttpHandler {
 
       kafkaWriter.write(topicMain, key, value, Map.of("sender", Env.instanceId.getBytes()));
     } catch (Throwable e) {
-      e.printStackTrace();
+      log.error("failed to write log", e);
       httpExchange.sendResponseHeaders(503, -1);
       return;
     }

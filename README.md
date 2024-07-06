@@ -1,7 +1,8 @@
 Skyhawk test task
 ============
 
-## To run 
+## To run
+
     docker-compose up -d
 
 Then load balancer will start listening port 8080 on localhost
@@ -16,22 +17,26 @@ Then load balancer will start listening port 8080 on localhost
 * Back
 
 ## Front container
+
 The engine providing an api to handle /log and /stat requests. See below for the both endpoints' description.
 
 ## Back container
+
 The engine which works on stat data: it writes all the incoming log records to the database.
 
 ## Front API
+
 ### /log
 
 Consumers json requests fit to schema
+
 ~~~json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
     "season": {
-      "type": "string",
+      "type": "string"
     },
     "team": {
       "type": "string"
@@ -73,255 +78,138 @@ Consumers json requests fit to schema
 ~~~
 
 Example request
+
 ~~~json
 {
-    "season": "season3",
-    "team": "team3",
-    "player": "player3",
-    "steals": 3,
-    "minutesPlayed": 3.0
+  "season": "season3",
+  "team": "team3",
+  "player": "player3",
+  "steals": 3,
+  "minutesPlayed": 3.0
 }
 ~~~
 
 ### /stat
 
 Consumers json requests fit to schema
+
 ~~~json
 {
-   "$schema": "http://json-schema.org/draft-04/schema#",
-   "type": "object",
-   "properties": {
-      "keys": {
-         "type": "array",
-         "items": [
-            {
-               "type": "object",
-               "properties": {
-                  "key": {
-                     "type": "string"
-                  },
-                  "filters": {
-                     "type": "array",
-                     "items": [
-                        {
-                           "type": "string"
-                        },
-                        {
-                           "type": "string"
-                        },
-                        {
-                           "type": "string"
-                        }
-                     ]
-                  }
-               },
-               "required": [
-                  "key",
-                  "filters"
-               ]
-            },
-            {
-               "type": "object",
-               "properties": {
-                  "key": {
-                     "type": "string"
-                  },
-                  "filters": {
-                     "type": "array",
-                     "items": [
-                        {
-                           "type": "string"
-                        },
-                        {
-                           "type": "string"
-                        }
-                     ]
-                  }
-               },
-               "required": [
-                  "key",
-                  "filters"
-               ]
-            },
-            {
-               "type": "object",
-               "properties": {
-                  "key": {
-                     "type": "string"
-                  },
-                  "filters": {
-                     "type": "array",
-                     "items": [
-                        {
-                           "type": "string"
-                        }
-                     ]
-                  }
-               },
-               "required": [
-                  "key",
-                  "filters"
-               ]
-            }
-         ]
-      },
-      "values": {
-         "type": "array",
-         "items": [
-            {
-               "type": "object",
-               "properties": {
-                  "value": {
-                     "type": "string"
-                  },
-                  "aggregations": {
-                     "type": "array",
-                     "items": [
-                        {
-                           "type": "string"
-                        },
-                        {
-                           "type": "string"
-                        }
-                     ]
-                  }
-               },
-               "required": [
-                  "value",
-                  "aggregations"
-               ]
-            },
-            {
-               "type": "object",
-               "properties": {
-                  "value": {
-                     "type": "string"
-                  },
-                  "aggregations": {
-                     "type": "array",
-                     "items": [
-                        {
-                           "type": "string"
-                        },
-                        {
-                           "type": "string"
-                        }
-                     ]
-                  }
-               },
-               "required": [
-                  "value",
-                  "aggregations"
-               ]
-            }
-         ]
-      }
-   },
-   "required": [
-      "keys",
-      "values"
-   ]
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "season": {
+      "type": "string"
+    },
+    "per": {
+      "type": "string"
+    },
+    "values": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": [
+    "season",
+    "per",
+    "values"
+  ]
 }
 ~~~
 
 Example request
+
 ~~~json
 {
-   "keys": [
-      {
-         "key": "season",
-         "filters": [
-            "season1", "season2","season3"
-         ]
-      },
-      {
-         "key": "team",
-         "filters": [
-            "team2", "team1"
-         ]
-      },
-      {
-         "key": "player",
-         "filters": [
-            "player1"
-         ]
-      }
-   ],
-   "values": [
-      {
-         "value": "steals",
-         "aggregations": [
-            "max", "sum"
-         ]
-      },
-      {
-         "value": "minutesPlayed",
-         "aggregations": [
-            "avg", "min"
-         ]
-      }
-   ]
+  "season": "season",
+  "per": "player",
+  "values": [
+    "steals",
+    "blocks",
+    "fouls",
+    "minutesPlayed",
+    "points",
+    "rebounds",
+    "assists",
+    "turnovers"
+  ]
 }
 ~~~
 
-The list of possible aggregation operations to apply on any value:
-* min
-* max
-* sum
-* avg
+The list of possible aggregation keys:
+
+* team
+* player
 
 Example response:
+
 ~~~json
-[
-    {
-        "season": "SEASON3",
-        "team": "TEAM3",
-        "player": "PLAYER3",
-        "values": {
-            "minutesPlayed": {
-                "sum": 3.0,
-                "avg": 3.0,
-                "min": 3.0,
-                "max": 3.0
-            },
-            "steals": {
-                "sum": 3,
-                "max": 3
-            }
-        }
-    }
-]
+{
+  "PLAYER1": {
+    "minutesPlayed": 3.0
+  },
+  "PLAYER2": {
+    "minutesPlayed": 4.0
+  }
+}
 ~~~
 
 ## How it works
 
-The one of the available front containers receives a request on /log endpoint, validates the payload, 
-generates timestamps pair to make the combination of season, team, player and both generated timestamp unique across all 
+The one of the available front containers receives a request on /log endpoint, validates the payload,
+generates timestamps pair to make the combination of season, team, player and both generated timestamp unique across all
 requests, the uniqueness is important to store the received log record correctly in the database and in memory.
 
-If the validation process succeed, front container sends the log record and generated timestamps pair to kafka, then 
-stores the same info in the local memory. In case when then attempt to write to kafka fails nothing is being stored in 
+If the validation process succeed, front container sends the log record and generated timestamps pair to kafka, then
+stores the same info in the local memory. In case when then attempt to write to kafka fails nothing is being stored in
 memory and the 503 status code is being returned also.
 
-Front container writes all incoming info to the kafka topic, lets call it main, and also listens this topic with its 
-own randomly generated group id to get also the records which are being written to the main topic by other front containers.
+Front container writes all incoming info to the kafka topic, lets call it main, and also listens this topic with its
+own randomly generated group id to get also the records which are being written to the main topic by other front
+containers.
 
-So mainly we have all incoming requests written to the main topic and stored in the memory of all existing front containers.
+So mainly we have all incoming requests written to the main topic and stored in the memory of all existing front
+containers.
 
 Then the back containers start playing their roles.
 All they do is reading main topic with the same static group id and writing all the read data to the database.
 After the next batch of records is saved in the database, back container send one record with the maximum timestamp pair
 per kafka key to another topic, lets call it removal.
 
-Front container read the removal topic also, each front container does it with its own unique group id to read all 
-the records for all keys. When some record is read from the removal topic, front container removes all the records with 
-the same combinations of season + team + player from its own memory, but it does it only for record with timestamps lower
+Front container read the removal topic also, each front container does it with its own unique group id to read all
+the records for all keys. When some record is read from the removal topic, front container removes all the records with
+the same combinations of season + team + player from its own memory, but it does it only for record with timestamps
+lower
 of equal to the timestamp of the record read from the removal topic.
 
-When a stat request arrives to /stat endpoint, front container grabs all the available data from the database, 
-from its own memory and from the memory of another existing containers, merges the data and calculates statistics 
-according to the aggregations description from the stat request. All the filtering according to seasons, teams and players 
-filter is being applied on the step of reading the data from the database and from front containers' memory.
+When a stat request arrives to /stat endpoint, front container grabs all the available data from the database,
+from its own memory and from the memory of other existing containers, merges the data and calculates statistics
+according to the provided season, aggregation key and values.
 
-All the dataflows processing in the system is idempotent, there will be no problems if case of any kafka or database 
+All the dataflows processing in the system is idempotent, there will be no problems if case of any kafka or database
 connection issues.

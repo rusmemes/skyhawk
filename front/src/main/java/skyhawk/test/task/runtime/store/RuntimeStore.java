@@ -3,16 +3,13 @@ package skyhawk.test.task.runtime.store;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
-import skyhawk.test.task.common.protocol.stat.StatKey;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-
 
 public class RuntimeStore {
 
@@ -51,36 +48,20 @@ public class RuntimeStore {
     }
   }
 
-  public List<CacheRecord> copy(
-      Map<StatKey, Collection<String>> keysInfo
-  ) {
+  public List<CacheRecord> copy(String season) {
+
     if (cache.isEmpty()) {
+      return List.of();
+    }
+
+    final Map<String, Map<String, SortedMap<TimeKey, CacheRecord>>> teamData = cache.getOrDefault(season, Map.of());
+    if (teamData.isEmpty()) {
       return List.of();
     }
 
     List<CacheRecord> res = new ArrayList<>();
 
-    final Collection<String> seasonFilters = keysInfo.getOrDefault(StatKey.season, cache.keySet());
-    for (String seasonFilter : seasonFilters) {
-      final Map<String, Map<String, SortedMap<TimeKey, CacheRecord>>> teamData = cache.getOrDefault(seasonFilter, Map.of());
-      if (teamData.isEmpty()) {
-        continue;
-      }
-      final Collection<String> teamFilters = keysInfo.getOrDefault(StatKey.team, teamData.keySet());
-      for (String teamFilter : teamFilters) {
-        final Map<String, SortedMap<TimeKey, CacheRecord>> playerData = teamData.getOrDefault(teamFilter, Map.of());
-        if (playerData.isEmpty()) {
-          continue;
-        }
-        final Collection<String> playerFilters = keysInfo.getOrDefault(StatKey.player, playerData.keySet());
-        for (String playerFilter : playerFilters) {
-          final SortedMap<TimeKey, CacheRecord> records = playerData.get(playerFilter);
-          if (records != null && !records.isEmpty()) {
-            res.addAll(records.values());
-          }
-        }
-      }
-    }
+    teamData.forEach((key, playersData) -> playersData.forEach((key1, records) -> res.addAll(records.values())));
 
     return res;
   }
