@@ -33,8 +33,8 @@ public class DatabaseUtil {
 
         try (ResultSet resultSet = statement.executeQuery()) {
           while (resultSet.next()) {
-            Integer i;
-            Double d;
+            int i;
+            double d;
             res.add(new CacheRecord(
                 new Log(
                     resultSet.getString("season"),
