@@ -1,5 +1,6 @@
 package skyhawk.test.task.runtime.store;
 
+import lombok.extern.slf4j.Slf4j;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
@@ -11,6 +12,7 @@ import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+@Slf4j
 public class RuntimeStore {
 
   public static final RuntimeStore INSTANCE = new RuntimeStore();
@@ -32,18 +34,24 @@ public class RuntimeStore {
 
   public void remove(CacheRecord cacheRecord) {
 
-    final Log log = cacheRecord.log();
+    final Log logged = cacheRecord.log();
     final SortedMap<TimeKey, CacheRecord> map = cache
-        .getOrDefault(log.getSeason(), Map.of())
-        .getOrDefault(log.getTeam(), Map.of())
-        .get(log.getPlayer());
+        .getOrDefault(logged.getSeason(), Map.of())
+        .getOrDefault(logged.getTeam(), Map.of())
+        .get(logged.getPlayer());
 
     if (map != null && !map.isEmpty()) {
       final TimeKey timeKeyToRemoveUpTo = cacheRecord.timeKey();
       TimeKey currentEarliest = map.firstKey();
       while (currentEarliest != null && timeKeyToRemoveUpTo.compareTo(currentEarliest) > -1) {
         map.remove(currentEarliest);
-        currentEarliest = map.isEmpty() ? null : map.firstKey();
+        if (map.isEmpty()) currentEarliest = null;
+        else try {
+          currentEarliest = map.firstKey();
+        } catch (Throwable e) {
+          log.error("Failed to read earliest time key", e);
+          currentEarliest = null;
+        }
       }
     }
   }
