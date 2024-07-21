@@ -27,9 +27,7 @@ public class Front {
     server.createContext("/log", new LogHandler());
     server.createContext("/stat", new StatHandler());
     server.createContext("/stat-copy", new StatCopyHandler());
-    server.createContext("/health", exchange -> {
-      exchange.sendResponseHeaders(200, -1);
-    });
+    server.createContext("/health", it -> it.sendResponseHeaders(200, -1));
 
     server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
 

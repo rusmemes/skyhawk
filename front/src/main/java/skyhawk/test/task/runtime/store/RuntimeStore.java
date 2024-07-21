@@ -41,14 +41,14 @@ public class RuntimeStore {
         .get(logged.getPlayer());
 
     if (map != null && !map.isEmpty()) {
-      final TimeKey timeKeyToRemoveUpTo = cacheRecord.timeKey();
       TimeKey currentEarliest;
       try {
         currentEarliest = map.firstKey();
       } catch (Throwable e) {
         log.error("Failed to read earliest time key", e);
-        currentEarliest = null;
+        return;
       }
+      final TimeKey timeKeyToRemoveUpTo = cacheRecord.timeKey();
       while (currentEarliest != null && timeKeyToRemoveUpTo.compareTo(currentEarliest) > -1) {
         map.remove(currentEarliest);
         if (map.isEmpty()) currentEarliest = null;
