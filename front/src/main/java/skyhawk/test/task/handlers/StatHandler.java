@@ -50,7 +50,10 @@ public class StatHandler implements HttpHandler {
         || statRequest.getValues().isEmpty()
         || statRequest.getValues().contains(null)
     ) {
-      respond400(exchange, Map.of("validationErrors", "request body is incorrect: provide keys and values description"));
+      respond400(exchange, Map.of(
+          "validationErrors",
+          "request body is incorrect: provide keys and values description"
+      ));
       return;
     }
 

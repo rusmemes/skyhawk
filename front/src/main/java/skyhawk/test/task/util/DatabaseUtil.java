@@ -35,25 +35,59 @@ public class DatabaseUtil {
           while (resultSet.next()) {
             int i;
             double d;
-            res.add(new CacheRecord(
-                new Log(
-                    resultSet.getString("season"),
-                    resultSet.getString("team"),
-                    resultSet.getString("player"),
-                    columns.contains(StatValue.points) && (i = resultSet.getInt(StatValue.points.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.rebounds) && (i = resultSet.getInt(StatValue.rebounds.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.assists) && (i = resultSet.getInt(StatValue.assists.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.steals) && (i = resultSet.getInt(StatValue.steals.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.blocks) && (i = resultSet.getInt(StatValue.blocks.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.fouls) && (i = resultSet.getInt(StatValue.fouls.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.turnovers) && (i = resultSet.getInt(StatValue.turnovers.name())) > -1 && !resultSet.wasNull() ? i : null,
-                    columns.contains(StatValue.minutesPlayed) && (d = resultSet.getDouble(StatValue.minutesPlayed.name())) > -1 && !resultSet.wasNull() ? d : null
-                ),
-                new TimeKey(
-                    resultSet.getLong("t1"),
-                    resultSet.getLong("t2")
+            res.add(
+                new CacheRecord(
+                    new Log(
+                        resultSet.getString("season"),
+                        resultSet.getString("team"),
+                        resultSet.getString("player"),
+                        columns.contains(StatValue.points)
+                            && (i = resultSet.getInt(StatValue.points.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.rebounds)
+                            && (i = resultSet.getInt(StatValue.rebounds.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.assists)
+                            && (i = resultSet.getInt(StatValue.assists.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.steals)
+                            && (i = resultSet.getInt(StatValue.steals.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.blocks)
+                            && (i = resultSet.getInt(StatValue.blocks.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.fouls)
+                            && (i = resultSet.getInt(StatValue.fouls.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.turnovers)
+                            && (i = resultSet.getInt(StatValue.turnovers.name())) > -1
+                            && !resultSet.wasNull()
+                            ? i
+                            : null,
+                        columns.contains(StatValue.minutesPlayed)
+                            && (d = resultSet.getDouble(StatValue.minutesPlayed.name())) > -1
+                            && !resultSet.wasNull()
+                            ? d
+                            : null
+                    ),
+                    new TimeKey(
+                        resultSet.getLong("t1"),
+                        resultSet.getLong("t2")
+                    )
                 )
-            ));
+            );
           }
         }
       }

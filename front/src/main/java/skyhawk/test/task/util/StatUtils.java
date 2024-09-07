@@ -56,20 +56,29 @@ public class StatUtils {
 
     final HashMap<String, Map<StatValue, Map<StatValueAggFunction, Number>>> aggKey2Value2Func2Number = new HashMap<>();
     statRecords.forEach(statRecord -> {
+
       String aggKey = switch (per) {
         case team -> statRecord.team();
         case player -> statRecord.player();
       };
-      final Map<StatValue, Map<StatValueAggFunction, Number>> statValue2Func2Number = aggKey2Value2Func2Number.computeIfAbsent(aggKey, k -> new HashMap<>());
+
+      final Map<StatValue, Map<StatValueAggFunction, Number>> statValue2Func2Number = aggKey2Value2Func2Number
+          .computeIfAbsent(aggKey, k -> new HashMap<>());
+
       for (StatValue value : values) {
         final Map<StatValue, Number> map = statRecord.values();
         final Number number = map.get(value);
+
         if (number != null) {
-          final Map<StatValueAggFunction, Number> aggFuncToNumber = statValue2Func2Number.computeIfAbsent(value, k -> new HashMap<>());
+
+          final Map<StatValueAggFunction, Number> aggFuncToNumber = statValue2Func2Number
+              .computeIfAbsent(value, k -> new HashMap<>());
+
           aggFuncToNumber.compute(
               StatValueAggFunction.total,
               (k, oldValue) -> oldValue == null ? 1 : oldValue.intValue() + 1
           );
+
           aggFuncToNumber.compute(
               StatValueAggFunction.sum,
               (k, oldValue) -> oldValue == null
