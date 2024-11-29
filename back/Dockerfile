@@ -8,6 +8,7 @@ COPY .. /home/app/project
 
 WORKDIR /home/app/project
 
+RUN chmod +x mvnw
 RUN ./mvnw -pl back -am clean package -DskipTests
 
 WORKDIR /home/app/project/back/target
