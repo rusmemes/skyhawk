@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Slf4j
@@ -25,8 +24,9 @@ public class ServiceCallUtil {
   private final ServiceDiscovery serviceDiscovery = ServiceDiscovery.getInstance();
   private final ObjectMapper mapper = new ObjectMapper();
   private final RuntimeStore runtimeStore = RuntimeStore.INSTANCE;
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-  private final HttpClient httpClient = HttpClient.newHttpClient();
+  private final HttpClient httpClient = HttpClient.newBuilder()
+      .executor(Executors.newVirtualThreadPerTaskExecutor())
+      .build();
 
   public CompletableFuture<List<CacheRecord>> callServices(String season) {
 
@@ -45,25 +45,20 @@ public class ServiceCallUtil {
         continue;
       }
 
-      final URI finalUri = uri;
-      CompletableFuture<List<CacheRecord>> f = CompletableFuture.supplyAsync(
-          () -> callService(season.getBytes(StandardCharsets.UTF_8), finalUri),
-          executorService
-      );
+      CompletableFuture<Void> voidCompletableFuture = callService(season.getBytes(StandardCharsets.UTF_8), uri)
+          .thenAccept(list -> list.forEach(runtimeStore::log));
 
-      res = res.thenCombine(f, (n, r) -> {
-        r.forEach(runtimeStore::log);
-        return null;
-      });
+      res = res.thenCombine(voidCompletableFuture, (v1, v2) -> null);
     }
 
     return res.thenApply(n -> runtimeStore.copy(season));
   }
 
-  private List<CacheRecord> callService(byte[] req, URI finalUri) {
-    final HttpResponse<byte[]> response;
+  private CompletableFuture<List<CacheRecord>> callService(byte[] req, URI finalUri) {
+
+    final CompletableFuture<HttpResponse<byte[]>> response;
     try {
-      response = httpClient.send(
+      response = httpClient.sendAsync(
           HttpRequest.newBuilder()
               .uri(finalUri)
               .POST(HttpRequest.BodyPublishers.ofByteArray(req))
@@ -73,21 +68,25 @@ public class ServiceCallUtil {
     } catch (Throwable e) {
       log.error("Error calling service", e);
       serviceDiscovery.reportBadURI(finalUri);
-      return List.of();
+      return CompletableFuture.completedFuture(List.of());
     }
 
-    final int statusCode = response.statusCode();
-    if (statusCode != 200) {
-      return List.of();
-    }
+    return response.thenApply(
+        r -> {
+          final int statusCode = r.statusCode();
+          if (statusCode != 200) {
+            return List.of();
+          }
 
-    final byte[] body = response.body();
+          final byte[] body = r.body();
 
-    try {
-      return Arrays.asList(mapper.readValue(body, CacheRecord[].class));
-    } catch (IOException e) {
-      log.error("Error calling service", e);
-      return List.of();
-    }
+          try {
+            return Arrays.asList(mapper.readValue(body, CacheRecord[].class));
+          } catch (IOException e) {
+            log.error("Error calling service", e);
+            return List.of();
+          }
+        }
+    );
   }
 }
