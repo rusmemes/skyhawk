@@ -67,9 +67,7 @@ public class Back {
 
     final HttpServer server = HttpServer.create(new InetSocketAddress(Env.getPort()), 0);
     server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
-    server.createContext("/health", exchange -> {
-      exchange.sendResponseHeaders(200, -1);
-    });
+    server.createContext("/health", ex -> ex.sendResponseHeaders(200, -1));
     server.start();
 
     log.info("Health endpoint started");
