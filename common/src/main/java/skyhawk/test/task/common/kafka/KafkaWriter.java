@@ -30,7 +30,7 @@ public class KafkaWriter {
   public void write(String topic, String key, byte[] value, Map<String, byte[]> headers) {
 
     final ProducerRecord<String, byte[]> record = new ProducerRecord<>(topic, key, value);
-    headers.forEach((k, v) -> record.headers().add(k, v));
+    headers.forEach(record.headers()::add);
 
     try {
       producer.send(record).get();

@@ -41,18 +41,22 @@ public class StatUtils {
       StatPer per
   ) {
     final ArrayList<SeasonAvgStatRecord> statRecords = new ArrayList<>();
-    collectedData.forEach((team, v) -> v.forEach((player, v1) -> v1.values().forEach(record -> {
+    collectedData.forEach((team, v) ->
+        v.forEach((player, v1) ->
+            v1.values().forEach(record -> {
 
-      final HashMap<StatValue, Number> map = new HashMap<>();
-      for (StatValue value : values) {
-        final Number number = value.getter.apply(record.log());
-        if (number != null) map.put(value, number);
-      }
+              final HashMap<StatValue, Number> map = new HashMap<>();
+              for (StatValue value : values) {
+                final Number number = value.getter.apply(record.log());
+                if (number != null) map.put(value, number);
+              }
 
-      statRecords.add(new SeasonAvgStatRecord(
-          team, player, map
-      ));
-    })));
+              statRecords.add(new SeasonAvgStatRecord(
+                  team, player, map
+              ));
+            })
+        )
+    );
 
     final HashMap<String, Map<StatValue, Map<StatValueAggFunction, Number>>> aggKey2Value2Func2Number = new HashMap<>();
     statRecords.forEach(statRecord -> {
@@ -93,13 +97,15 @@ public class StatUtils {
 
     final HashMap<String, Map<StatValue, Number>> res = new HashMap<>();
 
-    aggKey2Value2Func2Number.forEach((aggKey, v) -> v.forEach((statValue, funcToNumber) -> {
-      final Map<StatValue, Number> statValueNumberMap = res.computeIfAbsent(aggKey, k -> new HashMap<>());
-      statValueNumberMap.put(
-          statValue,
-          funcToNumber.get(StatValueAggFunction.sum).doubleValue() / funcToNumber.get(StatValueAggFunction.total).doubleValue()
-      );
-    }));
+    aggKey2Value2Func2Number.forEach((aggKey, v) ->
+        v.forEach((statValue, funcToNumber) -> {
+          final Map<StatValue, Number> statValueNumberMap = res.computeIfAbsent(aggKey, k -> new HashMap<>());
+          statValueNumberMap.put(
+              statValue,
+              funcToNumber.get(StatValueAggFunction.sum).doubleValue() / funcToNumber.get(StatValueAggFunction.total).doubleValue()
+          );
+        })
+    );
 
     return res;
   }

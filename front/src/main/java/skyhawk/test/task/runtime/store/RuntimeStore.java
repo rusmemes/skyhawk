@@ -75,7 +75,11 @@ public class RuntimeStore {
 
     List<CacheRecord> res = new ArrayList<>();
 
-    teamData.forEach((key, playersData) -> playersData.forEach((key1, records) -> res.addAll(records.values())));
+    teamData.forEach((key, playersData) ->
+        playersData.forEach((key1, records) ->
+            res.addAll(records.values())
+        )
+    );
 
     return res;
   }

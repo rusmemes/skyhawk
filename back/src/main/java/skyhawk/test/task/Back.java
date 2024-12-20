@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class Back {
 
+  private static final Comparator<CacheRecord> COMPARATOR = Comparator.comparing(CacheRecord::timeKey);
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final String removalTopic = Env.getKafkaTopicRemoval();
   private static final KafkaReader kafkaReader = new KafkaReader(Set.of(Env.getKafkaTopicMain()), false);
@@ -145,7 +146,7 @@ public class Back {
       records.add(cacheRecord);
     }
 
-    records.sort(Comparator.comparing(CacheRecord::timeKey));
+    records.sort(COMPARATOR);
 
     return records;
   }
