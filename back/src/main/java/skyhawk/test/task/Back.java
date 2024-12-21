@@ -27,7 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class Back {
@@ -117,9 +120,13 @@ public class Back {
             } catch (JsonProcessingException e) {
               throw new RuntimeException(e);
             }
-            kafkaWriter.write(removalTopic, last.log().getAggregationKey(), bytes, Map.of());
-          } catch (SQLException e) {
+            kafkaWriter
+                .write(removalTopic, last.log().getAggregationKey(), bytes, Map.of())
+                .get(1000, TimeUnit.SECONDS);
+          } catch (SQLException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
+          } catch (TimeoutException e) {
+            log.warn("timeout while writing to removal topic", e);
           }
         }));
       }

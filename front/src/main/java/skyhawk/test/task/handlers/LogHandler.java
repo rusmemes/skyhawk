@@ -58,7 +58,7 @@ public class LogHandler implements HttpHandler {
         throw new RuntimeException(e);
       }
 
-      kafkaWriter.write(topicMain, key, value, Map.of("sender", Env.instanceId.getBytes()));
+      kafkaWriter.write(topicMain, key, value, Map.of("sender", Env.instanceId.getBytes())).get();
     } catch (Throwable e) {
       log.error("failed to write log", e);
       httpExchange.sendResponseHeaders(503, -1);

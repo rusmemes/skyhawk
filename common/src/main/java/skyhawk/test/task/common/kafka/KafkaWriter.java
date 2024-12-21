@@ -3,13 +3,14 @@ package skyhawk.test.task.common.kafka;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import skyhawk.test.task.common.utils.Env;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 
 public class KafkaWriter {
 
@@ -27,15 +28,20 @@ public class KafkaWriter {
     this.producer = new KafkaProducer<>(properties);
   }
 
-  public void write(String topic, String key, byte[] value, Map<String, byte[]> headers) {
+  public CompletableFuture<RecordMetadata> write(String topic, String key, byte[] value, Map<String, byte[]> headers) {
 
     final ProducerRecord<String, byte[]> record = new ProducerRecord<>(topic, key, value);
     headers.forEach(record.headers()::add);
 
-    try {
-      producer.send(record).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
+    final CompletableFuture<RecordMetadata> res = new CompletableFuture<>();
+    producer.send(record, (metadata, exception) -> {
+      if (exception != null) {
+        res.completeExceptionally(exception);
+      } else {
+        res.complete(metadata);
+      }
+    });
+
+    return res;
   }
 }
