@@ -165,7 +165,7 @@ generates timestamps pair to make the combination of season, team, player and bo
 requests, the uniqueness is important to store the received log record correctly in the database and in memory.
 
 If the validation process succeed, front container sends the log record and generated timestamps pair to kafka, then
-stores the same info in the local memory. In case when then attempt to write to kafka fails nothing is being stored in
+stores the same info in the local memory. In case when an attempt to write to kafka fails nothing is being stored in
 memory and the 503 status code is being returned also.
 
 Front container writes all incoming info to the kafka topic, lets call it main, and also listens this topic with its
