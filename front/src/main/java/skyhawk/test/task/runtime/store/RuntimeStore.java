@@ -26,9 +26,9 @@ public class RuntimeStore {
   public void log(CacheRecord cacheRecord) {
     final Log log = cacheRecord.log();
     cache
-        .computeIfAbsent(log.getSeason(), s -> new ConcurrentHashMap<>())
-        .computeIfAbsent(log.getTeam(), t -> new ConcurrentHashMap<>())
-        .computeIfAbsent(log.getPlayer(), p -> new ConcurrentSkipListMap<>())
+        .computeIfAbsent(log.season(), s -> new ConcurrentHashMap<>())
+        .computeIfAbsent(log.team(), t -> new ConcurrentHashMap<>())
+        .computeIfAbsent(log.player(), p -> new ConcurrentSkipListMap<>())
         .put(cacheRecord.timeKey(), cacheRecord);
   }
 
@@ -36,9 +36,9 @@ public class RuntimeStore {
 
     final Log logged = cacheRecord.log();
     final SortedMap<TimeKey, CacheRecord> map = cache
-        .getOrDefault(logged.getSeason(), Map.of())
-        .getOrDefault(logged.getTeam(), Map.of())
-        .get(logged.getPlayer());
+        .getOrDefault(logged.season(), Map.of())
+        .getOrDefault(logged.team(), Map.of())
+        .get(logged.player());
 
     if (map != null && !map.isEmpty()) {
       TimeKey currentEarliest;

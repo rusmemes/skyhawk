@@ -16,17 +16,8 @@ import skyhawk.test.task.common.utils.Env;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -204,19 +195,19 @@ public class Back {
 
         final Log log = cacheRecord.log();
 
-        preparedStatement.setString(index++, log.getSeason());
-        preparedStatement.setString(index++, log.getTeam());
-        preparedStatement.setString(index++, log.getPlayer());
+        preparedStatement.setString(index++, log.season());
+        preparedStatement.setString(index++, log.team());
+        preparedStatement.setString(index++, log.player());
 
-        setNullableInteger(log.getPoints(), index++, preparedStatement);
-        setNullableInteger(log.getRebounds(), index++, preparedStatement);
-        setNullableInteger(log.getAssists(), index++, preparedStatement);
-        setNullableInteger(log.getSteals(), index++, preparedStatement);
-        setNullableInteger(log.getBlocks(), index++, preparedStatement);
-        setNullableInteger(log.getFouls(), index++, preparedStatement);
-        setNullableInteger(log.getTurnovers(), index++, preparedStatement);
+        setNullableInteger(log.points(), index++, preparedStatement);
+        setNullableInteger(log.rebounds(), index++, preparedStatement);
+        setNullableInteger(log.assists(), index++, preparedStatement);
+        setNullableInteger(log.steals(), index++, preparedStatement);
+        setNullableInteger(log.blocks(), index++, preparedStatement);
+        setNullableInteger(log.fouls(), index++, preparedStatement);
+        setNullableInteger(log.turnovers(), index++, preparedStatement);
 
-        final Double minutesPlayed = log.getMinutesPlayed();
+        final Double minutesPlayed = log.minutesPlayed();
         if (minutesPlayed != null) {
           preparedStatement.setDouble(index++, minutesPlayed);
         } else {

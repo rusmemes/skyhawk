@@ -29,7 +29,7 @@ public class LogHandler implements HttpHandler {
   @Override
   public void handle(HttpExchange httpExchange) throws IOException {
 
-    final Log logRecord;
+    Log logRecord;
     try {
       logRecord = mapper.readValue(httpExchange.getRequestBody(), Log.class);
     } catch (IOException e) {
@@ -43,9 +43,19 @@ public class LogHandler implements HttpHandler {
       return;
     }
 
-    logRecord.setSeason(logRecord.getSeason().toUpperCase());
-    logRecord.setTeam(logRecord.getTeam().toUpperCase());
-    logRecord.setPlayer(logRecord.getPlayer().toUpperCase());
+    logRecord = new Log(
+        logRecord.season().toUpperCase(),
+        logRecord.team().toUpperCase(),
+        logRecord.player().toUpperCase(),
+        logRecord.points(),
+        logRecord.rebounds(),
+        logRecord.assists(),
+        logRecord.steals(),
+        logRecord.blocks(),
+        logRecord.fouls(),
+        logRecord.turnovers(),
+        logRecord.minutesPlayed()
+    );
 
     CacheRecord cacheRecord = new CacheRecord(logRecord, TimeKey.ofCurrentTime());
 

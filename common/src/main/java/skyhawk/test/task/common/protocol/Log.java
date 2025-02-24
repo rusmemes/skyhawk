@@ -2,31 +2,24 @@ package skyhawk.test.task.common.protocol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Log {
-
-  private String season;
-  private String team;
-  private String player;
-  private Integer points;
-  private Integer rebounds;
-  private Integer assists;
-  private Integer steals;
-  private Integer blocks;
-  private Integer fouls;
-  private Integer turnovers;
-  private Double minutesPlayed;
-
+public record Log(
+    String season,
+    String team,
+    String player,
+    Integer points,
+    Integer rebounds,
+    Integer assists,
+    Integer steals,
+    Integer blocks,
+    Integer fouls,
+    Integer turnovers,
+    Double minutesPlayed
+) {
   @JsonIgnore
   public String getAggregationKey() {
     return prepareAggregationKeyPart(season) + "_" + prepareAggregationKeyPart(team) + "_" + prepareAggregationKeyPart(player);

@@ -6,14 +6,14 @@ import java.util.function.Function;
 
 public enum StatValue {
 
-  points(Log::getPoints),
-  rebounds(Log::getRebounds),
-  assists(Log::getAssists),
-  steals(Log::getSteals),
-  blocks(Log::getBlocks),
-  fouls(Log::getFouls),
-  turnovers(Log::getTurnovers),
-  minutesPlayed(Log::getMinutesPlayed);
+  points(Log::points),
+  rebounds(Log::rebounds),
+  assists(Log::assists),
+  steals(Log::steals),
+  blocks(Log::blocks),
+  fouls(Log::fouls),
+  turnovers(Log::turnovers),
+  minutesPlayed(Log::minutesPlayed);
 
   public final Function<Log, ? extends Number> getter;
 

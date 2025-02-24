@@ -8,11 +8,7 @@ import skyhawk.test.task.stat.StatPer;
 import skyhawk.test.task.stat.StatValue;
 import skyhawk.test.task.stat.StatValueAggFunction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class StatUtils {
 
@@ -28,9 +24,9 @@ public class StatUtils {
   ) {
     final Log log = cacheRecord.log();
     collector
-        .computeIfAbsent(log.getSeason(), s -> new HashMap<>())
-        .computeIfAbsent(log.getTeam(), t -> new HashMap<>())
-        .computeIfAbsent(log.getPlayer(), p -> new HashMap<>())
+        .computeIfAbsent(log.season(), s -> new HashMap<>())
+        .computeIfAbsent(log.team(), t -> new HashMap<>())
+        .computeIfAbsent(log.player(), p -> new HashMap<>())
         .put(cacheRecord.timeKey(), cacheRecord);
   }
 
