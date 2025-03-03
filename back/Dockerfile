@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM openjdk:25-jdk
 
 RUN mkdir /home/app
 RUN mkdir /home/app/project

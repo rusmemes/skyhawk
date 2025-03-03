@@ -1,7 +1,8 @@
 package skyhawk.test.task;
 
 import com.sun.net.httpserver.HttpServer;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.utils.Env;
 import skyhawk.test.task.handlers.LogHandler;
 import skyhawk.test.task.handlers.StatCopyHandler;
@@ -12,8 +13,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
-@Slf4j
 public class Front {
+
+  private static final Logger log = LoggerFactory.getLogger(Front.class);
 
   public static void main(String[] args) throws IOException {
     KafkaWorker.runKafkaWorker();

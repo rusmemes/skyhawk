@@ -1,13 +1,15 @@
 package skyhawk.test.task.common.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.util.Objects;
 import java.util.UUID;
 
-@Slf4j
 public class Env {
+
+  private static final Logger log = LoggerFactory.getLogger(Env.class);
 
   public static final String instanceId = UUID.randomUUID().toString();
 

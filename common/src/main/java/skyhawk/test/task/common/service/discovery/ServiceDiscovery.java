@@ -1,26 +1,21 @@
 package skyhawk.test.task.common.service.discovery;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.utils.Env;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Slf4j
-@RequiredArgsConstructor
 public class ServiceDiscovery {
+
+  private static final Logger log = LoggerFactory.getLogger(ServiceDiscovery.class);
 
   private static final String DDL = """
       create table if not exists service_discovery
@@ -31,8 +26,11 @@ public class ServiceDiscovery {
       create unique index if not exists service_discovery_url_unique_idx ON service_discovery (url);
       """;
 
-  @Getter
   private static final ServiceDiscovery instance;
+
+  public static ServiceDiscovery getInstance() {
+    return instance;
+  }
 
   static {
     try {
@@ -71,6 +69,11 @@ public class ServiceDiscovery {
   private final long expirationTimeMs;
 
   private final CopyOnWriteArrayList<URI> serviceList = new CopyOnWriteArrayList<>();
+
+  public ServiceDiscovery(URI self, long expirationTimeMs) {
+    this.self = self;
+    this.expirationTimeMs = expirationTimeMs;
+  }
 
   public static void runDDL(Connection conn) throws SQLException {
     try (Statement statement = conn.createStatement()) {

@@ -3,7 +3,8 @@ package skyhawk.test.task.handlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.TimeKey;
 import skyhawk.test.task.stat.StatRequest;
@@ -24,8 +25,9 @@ import static skyhawk.test.task.common.utils.Http.respond400;
 import static skyhawk.test.task.util.StatUtils.calcStats;
 import static skyhawk.test.task.util.StatUtils.mergeResultToCollector;
 
-@Slf4j
 public class StatHandler implements HttpHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(StatHandler.class);
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final ServiceCallUtil serviceCallUtil = new ServiceCallUtil();
@@ -43,12 +45,12 @@ public class StatHandler implements HttpHandler {
     }
 
     // validate request
-    if (statRequest.getSeason() == null
-        || statRequest.getSeason().isBlank()
-        || statRequest.getPer() == null
-        || statRequest.getValues() == null
-        || statRequest.getValues().isEmpty()
-        || statRequest.getValues().contains(null)
+    if (statRequest.season() == null
+        || statRequest.season().isBlank()
+        || statRequest.per() == null
+        || statRequest.values() == null
+        || statRequest.values().isEmpty()
+        || statRequest.values().contains(null)
     ) {
       respond400(exchange, Map.of(
           "validationErrors",
@@ -58,8 +60,8 @@ public class StatHandler implements HttpHandler {
     }
 
     final Map<String, Map<String, Map<String, Map<TimeKey, CacheRecord>>>> processedRequest = processRequest(
-        statRequest.getSeason(),
-        statRequest.getValues()
+        statRequest.season(),
+        statRequest.values()
     );
 
     if (processedRequest == null) {
@@ -68,9 +70,9 @@ public class StatHandler implements HttpHandler {
     }
 
     final Map<String, Map<StatValue, Number>> response = calcStats(
-        processedRequest.getOrDefault(statRequest.getSeason().toUpperCase(), Map.of()),
-        statRequest.getValues(),
-        statRequest.getPer()
+        processedRequest.getOrDefault(statRequest.season().toUpperCase(), Map.of()),
+        statRequest.values(),
+        statRequest.per()
     );
 
     if (response.isEmpty()) {

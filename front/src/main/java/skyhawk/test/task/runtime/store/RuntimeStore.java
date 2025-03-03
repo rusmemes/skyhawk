@@ -1,6 +1,7 @@
 package skyhawk.test.task.runtime.store;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
@@ -12,8 +13,9 @@ import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-@Slf4j
 public class RuntimeStore {
+
+  private static final Logger log = LoggerFactory.getLogger(RuntimeStore.class);
 
   public static final RuntimeStore INSTANCE = new RuntimeStore();
 

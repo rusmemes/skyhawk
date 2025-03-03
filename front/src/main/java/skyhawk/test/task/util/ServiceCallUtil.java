@@ -1,7 +1,8 @@
 package skyhawk.test.task.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.service.discovery.ServiceDiscovery;
 import skyhawk.test.task.runtime.store.RuntimeStore;
@@ -18,8 +19,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-@Slf4j
 public class ServiceCallUtil {
+
+  private static final Logger log = LoggerFactory.getLogger(ServiceCallUtil.class);
 
   private final ServiceDiscovery serviceDiscovery = ServiceDiscovery.getInstance();
   private final ObjectMapper mapper = new ObjectMapper();

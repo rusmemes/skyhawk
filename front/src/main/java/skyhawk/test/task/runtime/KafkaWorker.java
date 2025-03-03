@@ -1,10 +1,11 @@
 package skyhawk.test.task.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.header.Header;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.kafka.KafkaReader;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.utils.Env;
@@ -15,8 +16,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-@Slf4j
 public class KafkaWorker {
+
+  private static final Logger log = LoggerFactory.getLogger(KafkaWorker.class);
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final String mainTopic = Env.getKafkaTopicMain();

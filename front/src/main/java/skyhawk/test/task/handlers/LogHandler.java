@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.kafka.KafkaWriter;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
@@ -18,8 +19,9 @@ import java.util.Map;
 
 import static skyhawk.test.task.common.utils.Http.respond400;
 
-@Slf4j
 public class LogHandler implements HttpHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(LogHandler.class);
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final KafkaWriter kafkaWriter = new KafkaWriter();

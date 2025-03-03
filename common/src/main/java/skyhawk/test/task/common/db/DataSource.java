@@ -2,14 +2,11 @@ package skyhawk.test.task.common.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import skyhawk.test.task.common.utils.Env;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataSource {
 
   private static final HikariConfig config = new HikariConfig();

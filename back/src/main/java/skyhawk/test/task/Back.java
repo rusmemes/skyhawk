@@ -3,9 +3,10 @@ package skyhawk.test.task;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.kafka.KafkaReader;
 import skyhawk.test.task.common.kafka.KafkaWriter;
@@ -23,8 +24,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@Slf4j
 public class Back {
+
+  private static final Logger log = LoggerFactory.getLogger(Back.class);
 
   private static final Comparator<CacheRecord> COMPARATOR = Comparator.comparing(CacheRecord::timeKey);
   private static final ObjectMapper MAPPER = new ObjectMapper();
