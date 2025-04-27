@@ -95,7 +95,7 @@ public class StatHandler implements HttpHandler {
     // season -> team -> player -> time -> record
     Map<String, Map<String, Map<String, Map<TimeKey, CacheRecord>>>> rawDataCollector = new HashMap<>();
 
-    // call another backs
+    // call other backs
     CompletableFuture<List<CacheRecord>> res = serviceCallUtil.callServices(season);
 
     // load from database
@@ -107,7 +107,7 @@ public class StatHandler implements HttpHandler {
       return null;
     }
 
-    // merge the data from another backs
+    // merge the data from other backs
     mergeResultToCollector(res.join(), rawDataCollector);
     return rawDataCollector;
   }
