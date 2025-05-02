@@ -46,25 +46,25 @@ public class Back {
   private static final KafkaWriter kafkaWriter = new KafkaWriter();
 
   private static final String DDL = """
-      create table if not exists nba_stats
-      (
-          t1            bigint not null,
-          t2            bigint not null,
-          season        text   not null,
-          team          text   not null,
-          player        text   not null,
-          points        integer,
-          rebounds      integer,
-          assists       integer,
-          steals        integer,
-          blocks        integer,
-          fouls         integer,
-          turnovers     integer,
-          minutesPlayed decimal(10, 4)
-      );
-      create unique index if not exists nba_stats_unique_idx ON nba_stats (season,player,team,t1,t2);
-      create index if not exists nba_stats_agg_idx ON nba_stats (season,player,team);
-      """;
+    create table if not exists nba_stats
+    (
+        t1            bigint not null,
+        t2            bigint not null,
+        season        text   not null,
+        team          text   not null,
+        player        text   not null,
+        points        integer,
+        rebounds      integer,
+        assists       integer,
+        steals        integer,
+        blocks        integer,
+        fouls         integer,
+        turnovers     integer,
+        minutesPlayed decimal(10, 4)
+    );
+    create unique index if not exists nba_stats_unique_idx ON nba_stats (season,player,team,t1,t2);
+    create index if not exists nba_stats_agg_idx ON nba_stats (season,player,team);
+    """;
 
   public static void main(String[] args) throws Throwable {
 
@@ -125,8 +125,8 @@ public class Back {
               throw new RuntimeException(e);
             }
             kafkaWriter
-                .write(removalTopic, getAggregationKey(last.log()), bytes, Map.of())
-                .get(1000, TimeUnit.SECONDS);
+              .write(removalTopic, getAggregationKey(last.log()), bytes, Map.of())
+              .get(1000, TimeUnit.SECONDS);
           } catch (SQLException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
           } catch (TimeoutException e) {
@@ -246,7 +246,7 @@ public class Back {
 
   private static StringBuilder initBuilder() {
     return new StringBuilder(
-        "insert into nba_stats (t1, t2, season, team, player, points, rebounds, assists, steals, blocks, fouls, turnovers, minutesPlayed) values "
+      "insert into nba_stats (t1, t2, season, team, player, points, rebounds, assists, steals, blocks, fouls, turnovers, minutesPlayed) values "
     );
   }
 

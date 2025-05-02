@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 
 public class DatabaseUtil {
 
-  public static List<CacheRecord> loadFromDatabase(
-      String season, Set<StatValue> columns
-  ) throws SQLException {
+  public static List<CacheRecord> loadFromDatabase(String season, Set<StatValue> columns) throws SQLException {
 
     String valueColumns = columns.stream().map(Enum::name).collect(Collectors.joining(","));
 
