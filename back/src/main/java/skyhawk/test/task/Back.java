@@ -1,5 +1,25 @@
 package skyhawk.test.task;
 
+import static skyhawk.test.task.common.utils.LogRecordUtil.getAggregationKey;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
@@ -14,15 +34,6 @@ import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
 import skyhawk.test.task.common.utils.Env;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.sql.*;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class Back {
 
@@ -114,7 +125,7 @@ public class Back {
               throw new RuntimeException(e);
             }
             kafkaWriter
-                .write(removalTopic, last.log().getAggregationKey(), bytes, Map.of())
+                .write(removalTopic, getAggregationKey(last.log()), bytes, Map.of())
                 .get(1000, TimeUnit.SECONDS);
           } catch (SQLException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);

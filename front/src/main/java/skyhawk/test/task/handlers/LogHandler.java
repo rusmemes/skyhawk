@@ -1,5 +1,13 @@
 package skyhawk.test.task.handlers;
 
+import static skyhawk.test.task.common.utils.Http.respond400;
+import static skyhawk.test.task.common.utils.LogRecordUtil.getAggregationKey;
+import static skyhawk.test.task.common.utils.LogRecordUtil.validate;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -12,12 +20,6 @@ import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
 import skyhawk.test.task.common.utils.Env;
 import skyhawk.test.task.runtime.store.RuntimeStore;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static skyhawk.test.task.common.utils.Http.respond400;
 
 public class LogHandler implements HttpHandler {
 
@@ -39,7 +41,7 @@ public class LogHandler implements HttpHandler {
       return;
     }
 
-    final List<String> errors = logRecord.validate();
+    final List<String> errors = validate(logRecord);
     if (!errors.isEmpty()) {
       respond400(httpExchange, Map.of("validationErrors", errors));
       return;
@@ -62,7 +64,7 @@ public class LogHandler implements HttpHandler {
     CacheRecord cacheRecord = new CacheRecord(logRecord, TimeKey.ofCurrentTime());
 
     try {
-      final String key = cacheRecord.log().getAggregationKey();
+      final String key = getAggregationKey(cacheRecord.log());
       final byte[] value;
       try {
         value = mapper.writeValueAsBytes(cacheRecord);
