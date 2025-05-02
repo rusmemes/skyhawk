@@ -145,7 +145,9 @@ public class Back {
   }
 
   private static List<CacheRecord> parseRecords(List<byte[]> list) {
+
     final List<CacheRecord> records = new ArrayList<>(list.size());
+
     for (byte[] bytes : list) {
       final CacheRecord cacheRecord;
       try {
@@ -195,7 +197,12 @@ public class Back {
     }
   }
 
-  private static void insert(StringBuilder builder, Connection connection, List<CacheRecord> chunk) throws SQLException {
+  private static void insert(
+    StringBuilder builder,
+    Connection connection,
+    List<CacheRecord> chunk
+  ) throws SQLException {
+
     String sql = finishInsertSql(builder);
 
     try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -254,11 +261,15 @@ public class Back {
     builder.append("(").append("?,?,?,?,?,?,?,?,?,?,?,?,?").append("),");
   }
 
-  private static void setNullableInteger(Integer integer, int index, PreparedStatement preparedStatement) throws SQLException {
-    if (integer != null) {
-      preparedStatement.setInt(index, integer);
-    } else {
+  private static void setNullableInteger(
+    Integer integer,
+    int index,
+    PreparedStatement preparedStatement
+  ) throws SQLException {
+    if (integer == null) {
       preparedStatement.setNull(index, java.sql.Types.INTEGER);
+    } else {
+      preparedStatement.setInt(index, integer);
     }
   }
 }
