@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
@@ -66,7 +65,7 @@ public class Back {
     create index if not exists nba_stats_agg_idx ON nba_stats (season,player,team);
     """;
 
-  public static void main(String[] args) throws Throwable {
+  static void main() throws Throwable {
 
     try (Connection connection = DataSource.getConnection()) {
       runDDL(connection);

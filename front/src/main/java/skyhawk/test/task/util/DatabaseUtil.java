@@ -1,11 +1,5 @@
 package skyhawk.test.task.util;
 
-import skyhawk.test.task.common.db.DataSource;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
-import skyhawk.test.task.stat.StatValue;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import skyhawk.test.task.common.db.DataSource;
+import skyhawk.test.task.common.protocol.CacheRecord;
+import skyhawk.test.task.common.protocol.Log;
+import skyhawk.test.task.common.protocol.TimeKey;
+import skyhawk.test.task.stat.StatValue;
 
 public class DatabaseUtil {
 
@@ -21,7 +20,7 @@ public class DatabaseUtil {
 
     String valueColumns = columns.stream().map(Enum::name).collect(Collectors.joining(","));
 
-    final String sql = "select t1,t2,season,team,player," + valueColumns + " from nba_stats where season = ?";
+    final String sql = "select t1,t2,season,team,player,%s from nba_stats where season = ?".formatted(valueColumns);
 
     final List<CacheRecord> res = new ArrayList<>();
     try (Connection connection = DataSource.getConnection()) {
