@@ -1,17 +1,16 @@
 package skyhawk.test.task.runtime.store;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import skyhawk.test.task.common.protocol.CacheRecord;
+import skyhawk.test.task.common.protocol.Log;
+import skyhawk.test.task.common.protocol.TimeKey;
 
 public class RuntimeStore {
 
@@ -28,9 +27,9 @@ public class RuntimeStore {
   public void log(CacheRecord cacheRecord) {
     final Log log = cacheRecord.log();
     cache
-        .computeIfAbsent(log.season(), s -> new ConcurrentHashMap<>())
-        .computeIfAbsent(log.team(), t -> new ConcurrentHashMap<>())
-        .computeIfAbsent(log.player(), p -> new ConcurrentSkipListMap<>())
+        .computeIfAbsent(log.season(), _ -> new ConcurrentHashMap<>())
+        .computeIfAbsent(log.team(), _ -> new ConcurrentHashMap<>())
+        .computeIfAbsent(log.player(), _ -> new ConcurrentSkipListMap<>())
         .put(cacheRecord.timeKey(), cacheRecord);
   }
 
@@ -77,8 +76,8 @@ public class RuntimeStore {
 
     List<CacheRecord> res = new ArrayList<>();
 
-    teamData.forEach((key, playersData) ->
-        playersData.forEach((key1, records) ->
+    teamData.forEach((_, playersData) ->
+        playersData.forEach((_, records) ->
             res.addAll(records.values())
         )
     );

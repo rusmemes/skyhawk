@@ -1,12 +1,5 @@
 package skyhawk.test.task.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.service.discovery.ServiceDiscovery;
-import skyhawk.test.task.runtime.store.RuntimeStore;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,6 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import skyhawk.test.task.common.protocol.CacheRecord;
+import skyhawk.test.task.common.service.discovery.ServiceDiscovery;
+import skyhawk.test.task.runtime.store.RuntimeStore;
 
 public class ServiceCallUtil {
 
@@ -50,10 +49,10 @@ public class ServiceCallUtil {
       CompletableFuture<Void> voidCompletableFuture = callService(season.getBytes(StandardCharsets.UTF_8), uri)
           .thenAccept(list -> list.forEach(runtimeStore::log));
 
-      res = res.thenCombine(voidCompletableFuture, (v1, v2) -> null);
+      res = res.thenCombine(voidCompletableFuture, (_, _) -> null);
     }
 
-    return res.thenApply(n -> runtimeStore.copy(season));
+    return res.thenApply(_ -> runtimeStore.copy(season));
   }
 
   private CompletableFuture<List<CacheRecord>> callService(byte[] req, URI finalUri) {

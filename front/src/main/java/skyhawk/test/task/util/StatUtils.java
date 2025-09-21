@@ -1,5 +1,10 @@
 package skyhawk.test.task.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.protocol.Log;
 import skyhawk.test.task.common.protocol.TimeKey;
@@ -7,8 +12,6 @@ import skyhawk.test.task.handlers.SeasonAvgStatRecord;
 import skyhawk.test.task.stat.StatPer;
 import skyhawk.test.task.stat.StatValue;
 import skyhawk.test.task.stat.StatValueAggFunction;
-
-import java.util.*;
 
 public class StatUtils {
 
@@ -24,9 +27,9 @@ public class StatUtils {
   ) {
     final Log log = cacheRecord.log();
     collector
-        .computeIfAbsent(log.season(), s -> new HashMap<>())
-        .computeIfAbsent(log.team(), t -> new HashMap<>())
-        .computeIfAbsent(log.player(), p -> new HashMap<>())
+        .computeIfAbsent(log.season(), _ -> new HashMap<>())
+        .computeIfAbsent(log.team(), _ -> new HashMap<>())
+        .computeIfAbsent(log.player(), _ -> new HashMap<>())
         .put(cacheRecord.timeKey(), cacheRecord);
   }
 
@@ -63,7 +66,7 @@ public class StatUtils {
       };
 
       final Map<StatValue, Map<StatValueAggFunction, Number>> statValue2Func2Number = aggKey2Value2Func2Number
-          .computeIfAbsent(aggKey, k -> new HashMap<>());
+          .computeIfAbsent(aggKey, _ -> new HashMap<>());
 
       for (StatValue value : values) {
         final Map<StatValue, Number> map = statRecord.values();
@@ -72,16 +75,16 @@ public class StatUtils {
         if (number != null) {
 
           final Map<StatValueAggFunction, Number> aggFuncToNumber = statValue2Func2Number
-              .computeIfAbsent(value, k -> new HashMap<>());
+              .computeIfAbsent(value, _ -> new HashMap<>());
 
           aggFuncToNumber.compute(
               StatValueAggFunction.total,
-              (k, oldValue) -> oldValue == null ? 1 : oldValue.intValue() + 1
+              (_, oldValue) -> oldValue == null ? 1 : oldValue.intValue() + 1
           );
 
           aggFuncToNumber.compute(
               StatValueAggFunction.sum,
-              (k, oldValue) -> oldValue == null
+              (_, oldValue) -> oldValue == null
                   ? number
                   : oldValue instanceof Double d
                   ? d + number.doubleValue()
@@ -95,7 +98,7 @@ public class StatUtils {
 
     aggKey2Value2Func2Number.forEach((aggKey, v) ->
         v.forEach((statValue, funcToNumber) -> {
-          final Map<StatValue, Number> statValueNumberMap = res.computeIfAbsent(aggKey, k -> new HashMap<>());
+          final Map<StatValue, Number> statValueNumberMap = res.computeIfAbsent(aggKey, _ -> new HashMap<>());
           statValueNumberMap.put(
               statValue,
               funcToNumber.get(StatValueAggFunction.sum).doubleValue() / funcToNumber.get(StatValueAggFunction.total).doubleValue()

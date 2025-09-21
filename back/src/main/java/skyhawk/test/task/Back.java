@@ -105,7 +105,7 @@ public class Back {
       // group by keys
       Map<String, List<byte[]>> keyToValue = new HashMap<>();
       for (final ConsumerRecord<String, byte[]> record : poll) {
-        keyToValue.computeIfAbsent(record.key(), k -> new ArrayList<>()).add(record.value());
+        keyToValue.computeIfAbsent(record.key(), _ -> new ArrayList<>()).add(record.value());
       }
 
       // process each record group concurrently
