@@ -63,27 +63,7 @@ public class KafkaUtil {
       // process each record group concurrently
       final List<Thread> threads = new ArrayList<>(keyToValue.size());
       for (List<byte[]> list : keyToValue.values()) {
-        threads.add(Thread.ofVirtual().start(() -> {
-          try {
-            final List<CacheRecord> records = parseRecords(list);
-            insert(records);
-
-            final CacheRecord last = records.getLast();
-            final byte[] bytes;
-            try {
-              bytes = MAPPER.writeValueAsBytes(last);
-            } catch (JsonProcessingException e) {
-              throw new RuntimeException(e);
-            }
-            kafkaWriter
-                .write(removalTopic, getAggregationKey(last.log()), bytes, Map.of())
-                .get(1000, TimeUnit.SECONDS);
-          } catch (SQLException | ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-          } catch (TimeoutException e) {
-            log.warn("timeout while writing to removal topic", e);
-          }
-        }));
+        threads.add(Thread.ofVirtual().start(() -> perThreadLogic(list)));
       }
 
       for (Thread thread : threads) {
@@ -92,6 +72,29 @@ public class KafkaUtil {
       }
 
       kafkaReader.commitOffset();
+    }
+  }
+
+  private static void perThreadLogic(List<byte[]> list) {
+    try {
+      final List<CacheRecord> records = parseRecords(list);
+      insert(records);
+
+      final CacheRecord last = records.getLast();
+      final byte[] bytes;
+      try {
+        bytes = MAPPER.writeValueAsBytes(last);
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
+      kafkaWriter
+          .write(removalTopic, getAggregationKey(last.log()), bytes, Map.of())
+          .get(1000, TimeUnit.SECONDS);
+    } catch (SQLException | ExecutionException | InterruptedException e) {
+      // will be thrown in the main thread
+      throw new RuntimeException(e);
+    } catch (TimeoutException e) {
+      log.warn("timeout while writing to removal topic", e);
     }
   }
 

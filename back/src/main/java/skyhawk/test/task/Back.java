@@ -32,6 +32,8 @@ public class Back {
     try {
       // blocking call
       KafkaUtil.workOnKafka();
+    } catch (Exception e) {
+      log.error("Error while working on Kafka, server is getting stopped", e);
     } finally {
       server.stop(0);
     }
