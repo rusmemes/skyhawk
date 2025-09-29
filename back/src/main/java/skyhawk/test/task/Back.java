@@ -30,6 +30,7 @@ public class Back {
     log.info("Health endpoint started");
 
     try {
+      // blocking call
       KafkaUtil.workOnKafka();
     } finally {
       server.stop(0);
