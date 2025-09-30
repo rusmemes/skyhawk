@@ -33,6 +33,8 @@ public class Back {
       // blocking call
       KafkaUtil.workOnKafka();
     } catch (Exception e) {
+      // in case of an error the entire application is getting stopped and the health endpoint is stoping to respond
+      // so the application must be restarted externally
       log.error("Error while working on Kafka, server is getting stopped", e);
     } finally {
       server.stop(0);
