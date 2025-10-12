@@ -1,6 +1,7 @@
 package skyhawk.test.task.common.protocol;
 
 public record TimeKey(long t1, long t2) implements Comparable<TimeKey> {
+
   @Override
   public int compareTo(TimeKey that) {
     int res = Long.compare(this.t1, that.t1);
