@@ -7,7 +7,6 @@ import static skyhawk.test.task.common.utils.LogRecordUtil.validate;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -72,7 +71,7 @@ public class LogHandler implements HttpHandler {
         throw new RuntimeException(e);
       }
 
-      kafkaWriter.write(topicMain, key, value, Map.of("sender", Env.instanceId.getBytes())).get();
+      kafkaWriter.write(topicMain, key, value, Map.of(CacheRecord.HEADER_SENDER, Env.instanceId.getBytes())).get();
     } catch (Throwable e) {
       log.error("failed to write log", e);
       httpExchange.sendResponseHeaders(503, -1);

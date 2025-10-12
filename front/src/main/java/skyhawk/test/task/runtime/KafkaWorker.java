@@ -1,5 +1,9 @@
 package skyhawk.test.task.runtime;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -10,11 +14,6 @@ import skyhawk.test.task.common.kafka.KafkaReader;
 import skyhawk.test.task.common.protocol.CacheRecord;
 import skyhawk.test.task.common.utils.Env;
 import skyhawk.test.task.runtime.store.RuntimeStore;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
 
 public class KafkaWorker {
 
@@ -80,7 +79,7 @@ public class KafkaWorker {
   }
 
   private static boolean isSentByMe(ConsumerRecord<String, byte[]> record) {
-    final Iterable<Header> sender = record.headers().headers("sender");
+    final Iterable<Header> sender = record.headers().headers(CacheRecord.HEADER_SENDER);
     final Iterator<Header> iterator = sender == null ? null : sender.iterator();
     if (iterator != null && iterator.hasNext()) {
       final byte[] bytes = iterator.next().value();
