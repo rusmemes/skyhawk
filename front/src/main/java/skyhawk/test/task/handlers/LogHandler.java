@@ -47,9 +47,9 @@ public class LogHandler implements HttpHandler {
     }
 
     logRecord = new Log(
-        logRecord.season().toUpperCase(),
-        logRecord.team().toUpperCase(),
-        logRecord.player().toUpperCase(),
+        logRecord.season().trim().toUpperCase(),
+        logRecord.team().trim().toUpperCase(),
+        logRecord.player().trim().toUpperCase(),
         logRecord.points(),
         logRecord.rebounds(),
         logRecord.assists(),

@@ -2,7 +2,6 @@ package skyhawk.test.task.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import skyhawk.test.task.common.protocol.Log;
 
 public class LogRecordUtil {
@@ -21,16 +20,30 @@ public class LogRecordUtil {
   }
 
   public static List<String> validate(Log log) {
+
     List<String> errors = null;
-    if (log.season() == null || log.season().isBlank()) {
+
+    String season = log.season();
+    if (season == null || season.isBlank()) {
       (errors = new ArrayList<>(11)).add("Missing season");
+    } else if (season.trim().chars().anyMatch(Character::isWhitespace)) {
+      (errors = new ArrayList<>(11)).add("season value contains whitespaces");
     }
-    if (log.team() == null || log.team().isBlank()) {
+
+    String team = log.team();
+    if (team == null || team.isBlank()) {
       (errors == null ? (errors = new ArrayList<>(10)) : errors).add("Missing team");
+    } else if (team.trim().chars().anyMatch(Character::isWhitespace)) {
+      (errors == null ? (errors = new ArrayList<>(10)) : errors).add("team value contains whitespaces");
     }
-    if (log.player() == null || log.player().isBlank()) {
+
+    String player = log.player();
+    if (player == null || player.isBlank()) {
       (errors == null ? (errors = new ArrayList<>(9)) : errors).add("Missing player");
+    } else if (player.trim().chars().anyMatch(Character::isWhitespace)) {
+      (errors == null ? (errors = new ArrayList<>(9)) : errors).add("player value contains whitespaces");
     }
+
     if (log.points() == null
       && log.rebounds() == null
       && log.assists() == null
