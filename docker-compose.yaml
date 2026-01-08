@@ -87,7 +87,6 @@ services:
       -Dkafka.group.id=random 
       -Dkafka.bootstrap.servers=kafka:9092 
       -Dservice.discovery.self.url=docker.host 
-      -Dservice.discovery.heartbeat.enabled=true 
       -Ddb.url=jdbc:postgresql://postgres:5432/postgres 
       -Ddb.username=postgres 
       -Ddb.password=test123

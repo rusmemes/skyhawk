@@ -1,4 +1,4 @@
-package skyhawk.test.task.common.service.discovery;
+package skyhawk.test.task.service.discovery;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.db.DataSource;
@@ -22,13 +21,13 @@ public class ServiceDiscovery {
   private static final Logger log = LoggerFactory.getLogger(ServiceDiscovery.class);
 
   private static final String DDL = """
-    create table if not exists service_discovery
-    (
-        url                 text   not null,
-        last_heartbeat_time bigint not null
-    );
-    create unique index if not exists service_discovery_url_unique_idx ON service_discovery (url);
-    """;
+      create table if not exists service_discovery
+      (
+          url                 text   not null,
+          last_heartbeat_time bigint not null
+      );
+      create unique index if not exists service_discovery_url_unique_idx ON service_discovery (url);
+      """;
 
   private static final ServiceDiscovery instance;
 
@@ -38,10 +37,7 @@ public class ServiceDiscovery {
 
   static {
     try {
-      instance = new ServiceDiscovery(
-        Env.isServiceDiscoveryHeartbeatEnabled() ? new URI(Env.getServiceDiscoverySelfUrl()) : null,
-        Env.getServiceDiscoveryExpirationTime()
-      );
+      instance = new ServiceDiscovery(new URI(Env.getServiceDiscoverySelfUrl()), Env.getServiceDiscoveryExpirationTime());
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
     }
@@ -116,10 +112,10 @@ public class ServiceDiscovery {
   private void heartbeat(Connection connection) throws SQLException {
     if (self != null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
-        """
-          insert into service_discovery (url, last_heartbeat_time) values (?, ?)
-          on conflict (url) do update set last_heartbeat_time = ?
           """
+              insert into service_discovery (url, last_heartbeat_time) values (?, ?)
+              on conflict (url) do update set last_heartbeat_time = ?
+              """
       )) {
         preparedStatement.setString(1, self.toString());
         final long time = System.currentTimeMillis();
@@ -133,7 +129,7 @@ public class ServiceDiscovery {
   private List<URI> getState(Connection connection) throws SQLException, URISyntaxException {
     List<URI> state = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
-      "select url from service_discovery where url != ? and last_heartbeat_time > ?"
+        "select url from service_discovery where url != ? and last_heartbeat_time > ?"
     )) {
       preparedStatement.setString(1, self == null ? "" : self.toString());
       preparedStatement.setLong(2, System.currentTimeMillis() - expirationTimeMs);

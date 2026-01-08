@@ -1,11 +1,10 @@
 package skyhawk.test.task.common.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetAddress;
 import java.util.Objects;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Env {
 
@@ -58,10 +57,6 @@ public class Env {
     }
   }
 
-  public static boolean isServiceDiscoveryHeartbeatEnabled() {
-    return getBooleanOrDefault("service.discovery.heartbeat.enabled", false);
-  }
-
   public static long getServiceDiscoveryExpirationTime() {
     return getLongOrDefault("service.discovery.expiration.time.ms", 5000L);
   }
@@ -108,19 +103,6 @@ public class Env {
     if (property != null) {
       try {
         return Integer.parseInt(property);
-      } catch (Throwable e) {
-        log.error("unable to parse {}", property, e);
-      }
-    }
-    System.err.println(name + " property not set, " + defaultValue + " will be used as default");
-    return defaultValue;
-  }
-
-  private static boolean getBooleanOrDefault(String name, boolean defaultValue) {
-    final String property = System.getProperty(name);
-    if (property != null) {
-      try {
-        return Boolean.parseBoolean(property);
       } catch (Throwable e) {
         log.error("unable to parse {}", property, e);
       }
