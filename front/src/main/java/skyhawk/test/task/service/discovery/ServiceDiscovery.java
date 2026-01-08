@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,8 +26,8 @@ public class ServiceDiscovery {
   private static final String DDL = """
       create table if not exists service_discovery
       (
-          url                 text   not null,
-          last_heartbeat_time bigint not null
+          url                 text      not null,
+          last_heartbeat_time timestamp not null
       );
       create unique index if not exists service_discovery_url_unique_idx ON service_discovery (url);
       """;
@@ -110,19 +113,15 @@ public class ServiceDiscovery {
   }
 
   private void heartbeat(Connection connection) throws SQLException {
-    if (self != null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(
-          """
-              insert into service_discovery (url, last_heartbeat_time) values (?, ?)
-              on conflict (url) do update set last_heartbeat_time = ?
-              """
-      )) {
-        preparedStatement.setString(1, self.toString());
-        final long time = System.currentTimeMillis();
-        preparedStatement.setLong(2, time);
-        preparedStatement.setLong(3, time);
-        preparedStatement.execute();
-      }
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        """
+            insert into service_discovery (url, last_heartbeat_time) values (?, ?)
+            on conflict (url) do update set last_heartbeat_time = excluded.last_heartbeat_time
+            """
+    )) {
+      preparedStatement.setString(1, self.toString());
+      preparedStatement.setTimestamp(2, Timestamp.from(Instant.now()));
+      preparedStatement.execute();
     }
   }
 
@@ -131,8 +130,8 @@ public class ServiceDiscovery {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         "select url from service_discovery where url != ? and last_heartbeat_time > ?"
     )) {
-      preparedStatement.setString(1, self == null ? "" : self.toString());
-      preparedStatement.setLong(2, System.currentTimeMillis() - expirationTimeMs);
+      preparedStatement.setString(1, self.toString());
+      preparedStatement.setTimestamp(2, Timestamp.from(Instant.now().minus(expirationTimeMs, ChronoUnit.MILLIS)));
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           state.add(new URI(resultSet.getString("url")));
