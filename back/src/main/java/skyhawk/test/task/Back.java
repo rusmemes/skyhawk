@@ -2,10 +2,14 @@ package skyhawk.test.task;
 
 import static skyhawk.test.task.DbUtil.runDDL;
 
+import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.util.concurrent.Executors;
+import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import skyhawk.test.task.common.db.DataSource;
+import skyhawk.test.task.common.utils.Env;
 
 public class Back {
 
@@ -18,6 +22,13 @@ public class Back {
     }
     log.info("DDL applied");
 
+    final HttpServer server = HttpServer.create(new InetSocketAddress(Env.getPort()), 0);
+    server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+    server.createContext("/health", ex -> ex.sendResponseHeaders(200, -1));
+    server.start();
+
+    log.info("Health endpoint started");
+
     try {
       // blocking call
       KafkaUtil.workOnKafka();
@@ -25,6 +36,8 @@ public class Back {
       // in case of an error the entire application is getting stopped and the health endpoint is stoping to respond
       // so the application must be restarted externally
       log.error("Error while working on Kafka, server is getting stopped", e);
+    } finally {
+      server.stop(0);
     }
   }
 }

@@ -43,6 +43,8 @@ services:
       - skyhawk
 
   back:
+    ports:
+      - "8080"
     entrypoint: >
       java
       -Dkafka.bootstrap.servers=kafka:9092 
