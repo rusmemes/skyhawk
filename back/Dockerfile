@@ -19,6 +19,4 @@ WORKDIR /home/app
 RUN rm -rf /home/app/project
 RUN rm -rf /root/.m2
 
-EXPOSE 8080
-HEALTHCHECK --interval=3s --timeout=1s --retries=1 CMD bash -c 'echo > /dev/tcp/127.0.0.1/8080' || exit 1
 ENTRYPOINT ["/bin/bash"]
