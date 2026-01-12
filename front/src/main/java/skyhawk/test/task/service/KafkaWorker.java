@@ -1,4 +1,4 @@
-package skyhawk.test.task.runtime;
+package skyhawk.test.task.service;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,10 +10,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.kafka.KafkaReader;
-import skyhawk.test.task.common.protocol.CacheRecord;
+import skyhawk.test.task.common.domain.CacheRecord;
 import skyhawk.test.task.common.utils.Env;
-import skyhawk.test.task.runtime.store.RuntimeStore;
+import skyhawk.test.task.service.kafka.KafkaReader;
 
 public class KafkaWorker {
 

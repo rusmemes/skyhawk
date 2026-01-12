@@ -1,4 +1,4 @@
-package skyhawk.test.task.service.discovery;
+package skyhawk.test.task.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.utils.Env;
+import skyhawk.test.task.service.db.DataSource;
 
 public class ServiceDiscovery {
 

@@ -2,7 +2,7 @@ package skyhawk.test.task.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import skyhawk.test.task.common.protocol.Log;
+import skyhawk.test.task.common.domain.Log;
 
 public class LogRecordUtil {
 

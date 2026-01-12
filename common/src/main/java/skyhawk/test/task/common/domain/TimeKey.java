@@ -1,4 +1,4 @@
-package skyhawk.test.task.common.protocol;
+package skyhawk.test.task.common.domain;
 
 public record TimeKey(long t1, long t2) implements Comparable<TimeKey> {
 

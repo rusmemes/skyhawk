@@ -1,11 +1,10 @@
-package skyhawk.test.task.common.db;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import skyhawk.test.task.common.utils.Env;
+package skyhawk.test.task.service.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import skyhawk.test.task.common.utils.Env;
 
 public class DataSource {
 

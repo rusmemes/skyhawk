@@ -1,5 +1,9 @@
-package skyhawk.test.task.common.kafka;
+package skyhawk.test.task.service.kafka;
 
+import java.time.Duration;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -8,11 +12,6 @@ import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import skyhawk.test.task.common.utils.Env;
-
-import java.time.Duration;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
 
 public class KafkaReader {
 

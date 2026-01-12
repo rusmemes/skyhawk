@@ -1,8 +1,7 @@
-package skyhawk.test.task.stat;
-
-import skyhawk.test.task.common.protocol.Log;
+package skyhawk.test.task.domain;
 
 import java.util.function.Function;
+import skyhawk.test.task.common.domain.Log;
 
 public enum StatValue {
 

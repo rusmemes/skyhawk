@@ -1,16 +1,8 @@
 package skyhawk.test.task.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.TimeKey;
-import skyhawk.test.task.stat.StatRequest;
-import skyhawk.test.task.stat.StatValue;
-import skyhawk.test.task.util.DatabaseUtil;
-import skyhawk.test.task.util.ServiceCallUtil;
+import static skyhawk.test.task.common.utils.Http.respond400;
+import static skyhawk.test.task.util.StatUtils.calcStats;
+import static skyhawk.test.task.util.StatUtils.mergeResultToCollector;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,10 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-
-import static skyhawk.test.task.common.utils.Http.respond400;
-import static skyhawk.test.task.util.StatUtils.calcStats;
-import static skyhawk.test.task.util.StatUtils.mergeResultToCollector;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.common.domain.TimeKey;
+import skyhawk.test.task.domain.StatRequest;
+import skyhawk.test.task.domain.StatValue;
+import skyhawk.test.task.util.DatabaseUtil;
+import skyhawk.test.task.util.ServiceCallUtil;
 
 public class StatHandler implements HttpHandler {
 

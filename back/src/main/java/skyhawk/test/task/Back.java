@@ -1,6 +1,6 @@
 package skyhawk.test.task;
 
-import static skyhawk.test.task.DbUtil.runDDL;
+import static skyhawk.test.task.util.DbUtil.runDDL;
 
 import java.net.InetSocketAddress;
 import java.sql.Connection;
@@ -8,8 +8,9 @@ import java.util.concurrent.Executors;
 import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.db.DataSource;
 import skyhawk.test.task.common.utils.Env;
+import skyhawk.test.task.service.db.DataSource;
+import skyhawk.test.task.util.KafkaUtil;
 
 public class Back {
 

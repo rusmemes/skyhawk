@@ -1,9 +1,7 @@
-package skyhawk.test.task.handlers;
+package skyhawk.test.task.domain;
 
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import skyhawk.test.task.stat.StatValue;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SeasonAvgStatRecord(

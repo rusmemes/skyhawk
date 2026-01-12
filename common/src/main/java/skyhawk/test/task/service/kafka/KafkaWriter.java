@@ -1,5 +1,8 @@
-package skyhawk.test.task.common.kafka;
+package skyhawk.test.task.service.kafka;
 
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -7,10 +10,6 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import skyhawk.test.task.common.utils.Env;
-
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 
 public class KafkaWriter {
 

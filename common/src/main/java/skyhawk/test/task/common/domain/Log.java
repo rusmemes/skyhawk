@@ -1,4 +1,4 @@
-package skyhawk.test.task.common.protocol;
+package skyhawk.test.task.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

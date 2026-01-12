@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.runtime.store.RuntimeStore;
-import skyhawk.test.task.service.discovery.ServiceDiscovery;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.service.RuntimeStore;
+import skyhawk.test.task.service.ServiceDiscovery;
 
 public class ServiceCallUtil {
 

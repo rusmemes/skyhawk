@@ -1,4 +1,4 @@
-package skyhawk.test.task;
+package skyhawk.test.task.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,10 +7,10 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import skyhawk.test.task.common.db.DataSource;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.common.domain.Log;
+import skyhawk.test.task.common.domain.TimeKey;
+import skyhawk.test.task.service.db.DataSource;
 
 public class DbUtil {
 
@@ -116,7 +116,7 @@ public class DbUtil {
     return builder.toString();
   }
 
-  static void runDDL(Connection conn) throws SQLException {
+  public static void runDDL(Connection conn) throws SQLException {
     try (Statement statement = conn.createStatement()) {
       statement.executeUpdate(DDL);
     }

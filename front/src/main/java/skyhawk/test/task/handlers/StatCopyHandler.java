@@ -1,15 +1,14 @@
 package skyhawk.test.task.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.runtime.store.RuntimeStore;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.service.RuntimeStore;
 
 public class StatCopyHandler implements HttpHandler {
 

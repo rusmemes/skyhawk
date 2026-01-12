@@ -1,4 +1,4 @@
-package skyhawk.test.task.runtime.store;
+package skyhawk.test.task.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.common.domain.Log;
+import skyhawk.test.task.common.domain.TimeKey;
 
 public class RuntimeStore {
 

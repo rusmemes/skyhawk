@@ -10,7 +10,7 @@ import skyhawk.test.task.common.utils.Env;
 import skyhawk.test.task.handlers.LogHandler;
 import skyhawk.test.task.handlers.StatCopyHandler;
 import skyhawk.test.task.handlers.StatHandler;
-import skyhawk.test.task.runtime.KafkaWorker;
+import skyhawk.test.task.service.KafkaWorker;
 
 public class Front {
 

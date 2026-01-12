@@ -1,4 +1,4 @@
-package skyhawk.test.task.common.protocol;
+package skyhawk.test.task.common.domain;
 
 public record CacheRecord(Log log, TimeKey timeKey) {
 

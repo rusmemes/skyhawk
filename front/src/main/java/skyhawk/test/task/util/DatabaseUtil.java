@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import skyhawk.test.task.common.db.DataSource;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
-import skyhawk.test.task.stat.StatValue;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.common.domain.Log;
+import skyhawk.test.task.common.domain.TimeKey;
+import skyhawk.test.task.domain.StatValue;
+import skyhawk.test.task.service.db.DataSource;
 
 public class DatabaseUtil {
 

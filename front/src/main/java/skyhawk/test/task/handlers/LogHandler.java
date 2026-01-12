@@ -13,12 +13,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.kafka.KafkaWriter;
-import skyhawk.test.task.common.protocol.CacheRecord;
-import skyhawk.test.task.common.protocol.Log;
-import skyhawk.test.task.common.protocol.TimeKey;
+import skyhawk.test.task.common.domain.CacheRecord;
+import skyhawk.test.task.common.domain.Log;
+import skyhawk.test.task.common.domain.TimeKey;
 import skyhawk.test.task.common.utils.Env;
-import skyhawk.test.task.runtime.store.RuntimeStore;
+import skyhawk.test.task.service.RuntimeStore;
+import skyhawk.test.task.service.kafka.KafkaWriter;
 
 public class LogHandler implements HttpHandler {
 

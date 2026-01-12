@@ -1,7 +1,7 @@
-package skyhawk.test.task;
+package skyhawk.test.task.util;
 
-import static skyhawk.test.task.DbUtil.insert;
 import static skyhawk.test.task.common.utils.LogRecordUtil.getAggregationKey;
+import static skyhawk.test.task.util.DbUtil.insert;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,10 +20,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import skyhawk.test.task.common.kafka.KafkaReader;
-import skyhawk.test.task.common.kafka.KafkaWriter;
-import skyhawk.test.task.common.protocol.CacheRecord;
+import skyhawk.test.task.common.domain.CacheRecord;
 import skyhawk.test.task.common.utils.Env;
+import skyhawk.test.task.service.kafka.KafkaReader;
+import skyhawk.test.task.service.kafka.KafkaWriter;
 
 public class KafkaUtil {
 
@@ -38,7 +38,7 @@ public class KafkaUtil {
   /**
    * Runs an infinite loop in the calling thread
    * */
-  static void workOnKafka() throws InterruptedException {
+  public static void workOnKafka() throws InterruptedException {
 
     boolean firstRead = true;
 
