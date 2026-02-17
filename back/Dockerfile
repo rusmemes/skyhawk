@@ -1,5 +1,5 @@
 # ---------- Stage 1: build ----------
-FROM openjdk:25-ea-jdk-slim-bookworm AS builder
+FROM eclipse-temurin:25-jdk-jammy AS builder
 
 WORKDIR /build
 COPY .. .
@@ -9,16 +9,22 @@ RUN ./mvnw -pl back -am clean package -DskipTests
 
 
 # ---------- Stage 2: runtime ----------
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:25-jre-jammy
 
 WORKDIR /app
 
-COPY --from=builder /build/back/target/*-jar-with-dependencies.jar app.jar
+RUN useradd --system --uid 1001 --no-create-home --shell /usr/sbin/nologin appuser
+
+COPY --from=builder \
+    /build/back/target/*-jar-with-dependencies.jar \
+    /app/app.jar
+
+RUN chown appuser:appuser /app/app.jar
+
+USER appuser
 
 EXPOSE 8080
-HEALTHCHECK --interval=3s --timeout=1s --retries=1 CMD bash -c 'echo > /dev/tcp/127.0.0.1/8080' || exit 1
 
-RUN useradd -m appuser
-USER appuser
+HEALTHCHECK --interval=3s --timeout=1s --retries=1 CMD bash -c 'echo > /dev/tcp/127.0.0.1/8080' || exit 1
 
 ENTRYPOINT ["/bin/bash"]
